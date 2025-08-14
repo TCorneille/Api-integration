@@ -19,7 +19,7 @@ type ProductMeta = {
   qrCode: string;
 };
 
-type Product = {
+export type Product = {
   id: number;
   title: string;
   description: string;
