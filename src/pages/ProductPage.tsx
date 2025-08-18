@@ -19,7 +19,7 @@ export default function ProductPage() {
   };
 
   return (
-    <div className="p-4">
+    <div className=" bg-primaryColor-100">
       <AddProduct onProductAdded={handleProductAdded} />
       <ProductList products={products} />
     </div>

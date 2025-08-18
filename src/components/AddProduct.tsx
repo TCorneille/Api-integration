@@ -10,7 +10,7 @@ export default function AddProduct({ onProductAdded }: Props) {
   const [form, setForm] = useState<Product>({
     title: "",
     category: "",
-    price: 0,
+    price: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,15 +44,15 @@ export default function AddProduct({ onProductAdded }: Props) {
   };
 
   return (
-    <div className="flex justify-center items-center">
-      <div className="bg-red-500 p-4 rounded w-1/2 shadow mt-4">
+    <div className="flex justify-center  items-center">
+      <div className=" p-4 rounded w-1/2 max-sm:w- bg-primaryColor-50 shadow mt-4">
         <h2 className="text-xl flex justify-center font-bold mb-4">Add Product</h2>
         <form
           onSubmit={handleSubmit}
           className="space-y-3 flex justify-center flex-col"
         >
           <input
-            className="border p-2 w-full"
+            className="border border-gray-300 p-2 w-full"
             name="title"
             placeholder="Title"
             value={form.title}
@@ -60,7 +60,7 @@ export default function AddProduct({ onProductAdded }: Props) {
             required
           />
           <input
-            className="border p-2 w-full"
+            className="border border-gray-300 p-2 w-full"
             name="category"
             placeholder="Category"
             value={form.category}
@@ -68,10 +68,10 @@ export default function AddProduct({ onProductAdded }: Props) {
             required
           />
           <input
-            className="border p-2 w-full"
+            className="border border-gray-300 p-2 w-full"
             name="price"
             placeholder="Price"
-            type="number"
+            // type="number"
             value={form.price}
             onChange={handleChange}
             required

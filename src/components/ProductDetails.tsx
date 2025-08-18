@@ -24,7 +24,7 @@ const ProductDetails: React.FC<Props> = ({ productId, onUpdated, onClose }) => {
       setLoading(true);
       setError(null);
       try {
-        const res = await api.get<Product>(`/products/${productId}`);
+        const res = await api.get<Product>(`/${productId}`);
         setProduct(res.data);
       } catch (err) {
         console.error(err);
@@ -50,9 +50,9 @@ const ProductDetails: React.FC<Props> = ({ productId, onUpdated, onClose }) => {
     
     try {
       setLoading(true);
-      await api.put(`/products/${product.id}`, product);
-      onUpdated(); // Notify parent to refresh list
-      setIsEditing(false); // Exit edit mode
+      await api.put(`/${productId}`, product);
+      onUpdated(); 
+      setIsEditing(false); 
     } catch (err) {
       console.error(err);
       setError("Failed to update product");
@@ -62,9 +62,9 @@ const ProductDetails: React.FC<Props> = ({ productId, onUpdated, onClose }) => {
   };
 
   const handleCancelEdit = () => {
-    // Re-fetch original data to discard changes
+    
     if (productId) {
-      api.get<Product>(`/products/${productId}`)
+      api.get<Product>(`/${productId}`)
         .then(res => setProduct(res.data))
         .catch(err => console.error(err));
     }
@@ -117,6 +117,20 @@ const ProductDetails: React.FC<Props> = ({ productId, onUpdated, onClose }) => {
             <p className="mt-1">{product.category}</p>
           )}
         </div>
+         <div>
+          <label className="block text-sm font-medium text-gray-700">Description</label>
+          {isEditing ? (
+            <input
+              type="text"
+              name="category"
+              value={product.description}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded"
+            />
+          ) : (
+            <p className="mt-1">{product.description}</p>
+          )}
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700">Price</label>
@@ -127,7 +141,7 @@ const ProductDetails: React.FC<Props> = ({ productId, onUpdated, onClose }) => {
               value={product.price}
               onChange={handleChange}
               className="mt-1 p-2 w-full border rounded"
-              step="0.01"
+              
             />
           ) : (
             <p className="mt-1">${product.price.toFixed(2)}</p>
@@ -151,12 +165,12 @@ const ProductDetails: React.FC<Props> = ({ productId, onUpdated, onClose }) => {
         )}
       </div>
 
-      <div className="mt-6 flex justify-end space-x-2">
+      <div className="mt-6 flex  justify-end space-x-2">
         {!isEditing ? (
           <>
             <button
               onClick={() => setIsEditing(true)}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="px-4 py-2 bg-primaryColor-500 text-white rounded"
             >
               Edit
             </button>
@@ -171,7 +185,7 @@ const ProductDetails: React.FC<Props> = ({ productId, onUpdated, onClose }) => {
           <>
             <button
               onClick={handleSave}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              className="px-4 py-2 bg-primaryColor-500 text-white rounded hover:bg-green-600"
               disabled={loading}
             >
               {loading ? "Saving..." : "Save"}

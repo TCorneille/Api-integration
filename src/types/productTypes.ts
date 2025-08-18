@@ -44,9 +44,9 @@ export type Product = {
   images: string[];
 };
 
-type ProductsResponse = {
-  products: Product[];
-  total: number;
-  skip: number;
-  limit: number;
-};
+// type ProductsResponse = {
+//   products: Product[];
+//   total: number;
+//   skip: number;
+//   limit: number;
+// };

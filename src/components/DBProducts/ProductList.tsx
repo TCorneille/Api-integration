@@ -43,7 +43,7 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
 
   const handleEditClick = (productId: number) => {
     setSelectedProductId(productId);
-    onSelectProduct(productId); // Notify parent about selected product
+    // onSelectProduct(productId); // Notify parent about selected product
   };
 
   const handleCloseDetails = () => {
@@ -70,18 +70,18 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
   if (error) return <p className="text-center text-red-500 p-4">{error}</p>;
 
   return (
-    <div className="bg-primaryColor-100 p-4 rounded shadow">
+    <div className="bg-primaryColor-100 min-lg:ml-8 mt-25 min-md:ml-5">
       <div className="relative mb-4 flex justify-center">
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border border-gray-400 p-2 pl-10 rounded w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="border border-gray-400 p-2 pl-10 rounded w-1/2 max-sm:w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
           placeholder=" "
         />
         
         {searchTerm === "" && (
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-400 flex items-center pointer-events-none">
+          <div className="absolute left-1/2 top-1/2  -translate-x-1/2 -translate-y-1/2 text-gray-400 flex items-center pointer-events-none">
             <FiSearch className="mr-2" />
             <span>Search product...</span>
           </div>
@@ -89,11 +89,11 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
       </div>
 
       <h2 className="text-lg font-semibold mb-3">Products</h2>
-      <ul className="space-y-3 grid grid-cols-4 max-sm:flex max-sm:flex-col">
+      <ul className="space-y-3 grid min-lg:grid-cols-4 min-md:grid min-md:grid-cols-3 max-sm:flex max-sm:flex-col">
         {filteredProducts.map((product) => (
           <li
             key={product.id}
-            className="min-sm:w-[350px] min-md:w-[300px] max-sm:w-full p-6 rounded-lg shadow-sm flex bg-primaryColor-50 flex-col justify-between items-center gap-4"
+            className="min-lg:w-[350px] min-md:w-[250px] max-sm:w-full p-6 rounded-lg shadow-sm flex bg-primaryColor-50 flex-col justify-between items-center gap-4"
           >
             <div className="w-full">
               <h2 className="font-bold">{product.title}</h2>
@@ -111,16 +111,16 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
                 />
               )}
             </div>
-            <div className="space-x-2">
+            <div className="space-x-2  flex justify-between">
               <button
                 onClick={() => handleEditClick(product.id)}
-                className="flex items-center px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                className=" bg-primaryColor-500 text-white rounded w-30 min-md:w-20"
               >
-                Edit
+                Details
               </button>
               <button
                 onClick={() => handleDelete(product.id)}
-                className="px-3 py-2 bg-red-900 text-white rounded hover:bg-red-700"
+                className="px-3 py-2 bg-red-900 text-white w-30 rounded min-md:w-20 hover:bg-red-700"
               >
                 Delete
               </button>
@@ -130,8 +130,8 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
       </ul>
 
       {selectedProductId && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-primaryColor-400/30 flex items-center justify-center p-4 z-50">
+          <div className="bg-primaryColor-50 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <ProductDetails
               productId={selectedProductId}
               onUpdated={() => {
