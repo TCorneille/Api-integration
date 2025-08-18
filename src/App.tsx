@@ -1,6 +1,12 @@
 
 
-import ProductList from "./components/DBProducts/ProductList";
+// import ProductList from "./components/DBProducts/ProductList";
+
+ import ProductsPage from "./pages/ProductPage"
+
+
+// import AddProduct from './components/AddProduct'
+
 
 
 
@@ -9,7 +15,11 @@ function App() {
 
   return (
     <>
-      <ProductList/>
+      
+      {/* <AddProduct/>
+      <ProductList/>  */}
+       <ProductsPage /> 
+      
     </>
   )
 }
