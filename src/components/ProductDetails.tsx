@@ -4,11 +4,11 @@ import type { Product } from "../types/productTypes";
 
 interface Props {
   productId: number | null;
-  onUpdated: () => void;
+  onProductUpdated: () => void;
   onClose: () => void;
 }
 
-const ProductDetails: React.FC<Props> = ({ productId, onUpdated, onClose }) => {
+const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose }) => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +28,7 @@ const ProductDetails: React.FC<Props> = ({ productId, onUpdated, onClose }) => {
         setProduct(res.data);
       } catch (err) {
         console.error(err);
-        setError("Failed to load product details");
+         setError("Failed to load product details");
       } finally {
         setLoading(false);
       }
@@ -46,20 +46,28 @@ const ProductDetails: React.FC<Props> = ({ productId, onUpdated, onClose }) => {
   };
 
   const handleSave = async () => {
-    if (!product) return;
+  if (!product) return;
+
+  try {
+    setLoading(true);
+    const res = await api.put(`/${productId}`, {
+      title: product.title,
+      price: product.price,
+      description: product.description,
+     
+    });
     
-    try {
-      setLoading(true);
-      await api.put(`/${productId}`, product);
-      onUpdated(); 
-      setIsEditing(false); 
-    } catch (err) {
-      console.error(err);
-      setError("Failed to update product");
-    } finally {
-      setLoading(false);
-    }
-  };
+    console.log("Updated product:", res.data);
+    onProductUpdated();
+    setIsEditing(false);
+  } catch (err) {
+    console.error(err);
+    // setError("Failed to update product");
+  } finally {
+    setLoading(false);
+  }
+};
+;
 
   const handleCancelEdit = () => {
     

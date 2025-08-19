@@ -2,6 +2,7 @@
 import { useState } from "react";
 import type { Product } from "./types/productTypes";
 
+
 interface Props {
   onProductAdded: (product: Product) => void; // pass product up
 }
@@ -10,7 +11,7 @@ export default function AddProduct({ onProductAdded }: Props) {
   const [form, setForm] = useState<Product>({
     title: "",
     category: "",
-    price: "",
+    price: 0,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +46,7 @@ export default function AddProduct({ onProductAdded }: Props) {
 
   return (
     <div className="flex justify-center  items-center">
-      <div className=" p-4 rounded w-1/2 max-sm:w- bg-primaryColor-50 shadow mt-4">
+      <div className=" p-4 rounded w-1/2 max-sm:w-10/12 bg-primaryColor-50 shadow mt-4">
         <h2 className="text-xl flex justify-center font-bold mb-4">Add Product</h2>
         <form
           onSubmit={handleSubmit}
