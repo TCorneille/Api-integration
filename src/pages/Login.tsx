@@ -87,7 +87,7 @@ const Login = () => {
         sessionStorage.setItem("authToken", data.token);
       }
       
-      alert(`Login successful!`);
+    
 
 
       navigate("/products", { replace: true });

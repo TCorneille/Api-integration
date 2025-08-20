@@ -6,6 +6,10 @@ import ProductDetails from "../ProductDetails";
 import { TiShoppingCart } from "react-icons/ti";
 import { useCart } from "../../context/CartContext";
 import Cart from "../Cart";
+import { BiTrash } from "react-icons/bi";
+import { GrFormView } from "react-icons/gr";
+import AddProduct from "../AddProduct";
+import { Link } from "react-router-dom";
 
 interface Props {
   product: Product;
@@ -18,12 +22,14 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState(""); 
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const [cartError, setCartError] = useState<string | null>(null);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
   const [showCart, setShowCart] = useState(false);
   const { cart, addToCart } = useCart();
+  const [showAddProduct, setShowAddProduct] = useState(false);
+  const [newProduct, setNewProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -36,7 +42,7 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
           title: p.title,
           category: p.category,
           price: p.price,
-          discountPercentage:p.discountPercentage,
+          discountPercentage: p.discountPercentage,
           images: p.images
         }));
         setProducts(fetchedProducts);
@@ -76,12 +82,12 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
     try {
       setCartError(null);
       setAddingToCart(productId);
-      
+
       // Your CartContext expects just the product ID and fetches details itself
       await addToCart(productId);
-      
+
       console.log("Product added to cart:", productId);
-      
+
     } catch (err) {
       console.error("Failed to add to cart:", err);
       setCartError("Failed to add product to cart. Please try again.");
@@ -100,8 +106,14 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
 
   return (
     <div className="min-lg:ml-8 mt-25 min-md:ml-5">
+      <div className="fixed top-4 right-4 mt-1.5 z-20">
+        
+
+           <Link to={`/`} className=' px-3 mt-auto  text-start hover:bg-primaryColor-50  flex '> Log out</Link>
+          
+      </div>
       {/* Cart Button */}
-      <div className="fixed top-4 right-4 z-40">
+      <div className="fixed top-4 right-25 z-40">
         <button
           onClick={() => setShowCart(true)}
           className="bg-primaryColor-500 text-white p-3 rounded-full shadow-lg hover:bg-primaryColor-600 relative"
@@ -121,7 +133,16 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
           {cartError}
         </div>
       )}
-      
+      <div className="fixed top-4 right-40 mt-1.5 z-20">
+        <button
+          onClick={() => setShowAddProduct(true)}
+          className="bg-primaryColor-500 text-white  font-bold p-1 rounded hover:bg-primaryColor-800"
+        >
+         <span className="text-2xl">+ </span> Add Product
+        </button>
+      </div>
+
+
       <div className="relative mb-4 flex justify-center">
         <input
           type="text"
@@ -130,7 +151,7 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
           className="border border-gray-400 p-2 pl-10 rounded w-1/2 max-sm:w-10/12 focus:outline-none focus:ring-2 focus:ring-blue-400"
           placeholder=" "
         />
-        
+
         {searchTerm === "" && (
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-400 flex items-center pointer-events-none">
             <FiSearch className="mr-2" />
@@ -140,7 +161,7 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
       </div>
 
       <h2 className="text-lg font-semibold flex justify-center mb-3">Products</h2>
-      
+
       {filteredProducts.length === 0 ? (
         <p className="text-center p-4">No products found</p>
       ) : (
@@ -152,17 +173,19 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
             >
               <div className="w-full">
                 <div className="flex  justify-between">
-                <h2 className="font-bold">{product.title}</h2>
-                 <p className="bg-accent-300">-{product.discountPercentage}%</p>
-                 </div>
+                  <h2 className="font-bold">{product.title}</h2>
+                  <div className="">
+                    <p className="bg-accent-200 rounded">-{product.discountPercentage}%</p>
+                  </div>
+                </div>
                 <div className="flex justify-between p-2 w-full items-end">
                   <p>{product.category}</p>
-                 
+
                   <p className="text-3xl">${product.price}</p>
 
                 </div>
               </div>
-              
+
               <div className="flex gap-2">
                 {product.images && product.images[0] && (
                   <img
@@ -175,24 +198,26 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
                   />
                 )}
               </div>
-              
-              <div className="space-x-2 flex justify-between w-full">
+
+              <div className="space-x-2 flex justify-center w-full">
                 <button
                   onClick={() => handleEditClick(product.id)}
-                  className="bg-primaryColor-500 text-white rounded px-3 py-2 min-md:w-20"
+                  className="bg-primaryColor-500 flex p-1 text-white  text-sm rounded "
                 >
-                  Details
+                  <GrFormView className="size-5" />
+                  <span>Details</span>
                 </button>
                 <button
                   onClick={() => handleDelete(product.id)}
-                  className="px-3 py-2 bg-red-900 text-white rounded min-md:w-20"
+                  className=" bg-red-900 flex text-white text-sm p-1 rounded"
                 >
-                  Delete
+                  <BiTrash className="size-5" />
+                  <span>Delete</span>
                 </button>
               </div>
-              
+
               <button
-                onClick={() => handleAddToCart(product.id)} 
+                onClick={() => handleAddToCart(product.id)}
                 disabled={addingToCart === product.id}
                 className="bg-primaryColor-800 text-white flex justify-center items-center gap-2 w-full rounded px-3 py-2 hover:bg-primaryColor-500 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
@@ -212,9 +237,29 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
           ))}
         </ul>
       )}
+{showAddProduct && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <div className="bg-white rounded-lg max-w-lg w-full p-6 shadow-lg relative">
+      <button
+        onClick={() => setShowAddProduct(false)}
+        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+      >
+        ✕
+      </button>
+
+      <AddProduct
+        onProductAdded={(product) => {
+          setNewProduct(product);      // keep local reference
+          setProducts((prev) => [product, ...prev]); // show instantly
+          setShowAddProduct(false);    // close modal
+        }}
+      />
+    </div>
+  </div>
+)}
 
       {selectedProductId && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/50 bg-opacity-30 flex items-center justify-center p-4 z-50">
           <div className="bg-primaryColor-50 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <ProductDetails
               productId={selectedProductId}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import AddProduct from "../components/AddProduct";
+// import AddProduct from "../components/AddProduct";
 import ProductList from "../components/DBProducts/ProductList";
 import type { Product } from "../types/productTypes";
 
@@ -20,7 +20,7 @@ export default function ProductPage() {
 
   return (
     <div className="">
-      <AddProduct onProductAdded={handleProductAdded} />
+      {/* <AddProduct onProductAdded={handleProductAdded} /> */}
       <ProductList products={products} />
     </div>
   );

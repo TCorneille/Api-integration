@@ -1,25 +1,42 @@
-
 import { useState } from "react";
 import type { Product } from "./types/productTypes";
 
-
 interface Props {
-  onProductAdded: (product: Product) => void; // pass product up
+  onProductAdded: (product: Product) => void;
+}
+
+
+//Define a form type separate from Product
+interface ProductForm {
+  title: string;
+  category: string;
+  price: number;
+  discountPercentage: number;
+  weight: number
+  brand: string;
+  images: string[];
 }
 
 export default function AddProduct({ onProductAdded }: Props) {
-  const [form, setForm] = useState<Product>({
+  const [form, setForm] = useState<ProductForm>({
     title: "",
     category: "",
     price: 0,
+    discountPercentage: 0,
+    weight: 0,
+    brand: "",
+    images: [""]
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm({
-      ...form,
-      [name]: name === "price" ? Number(value) : value,
-    });
+    setForm((prev) => ({
+      ...prev,
+      [name]:
+        name === "price" || name === "discountPercentage"
+          ? Number(value)
+          : value,
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -31,10 +48,20 @@ export default function AddProduct({ onProductAdded }: Props) {
       headers: { "Content-Type": "application/json" },
     })
       .then((res) => res.json())
-      .then((data) => {
+      .then((data: Product) => {
         console.log("Product created:", data);
         alert("Product added successfully!");
-        setForm({ title: "", category: "", price: 0 });
+
+        // Reset form
+        setForm({
+          title: "",
+          category: "",
+          price: 0,
+          discountPercentage: 0,
+          weight: 0,
+          brand: "",
+          images: [""]
+        });
 
         onProductAdded(data); // ✅ send product to parent
       })
@@ -45,9 +72,9 @@ export default function AddProduct({ onProductAdded }: Props) {
   };
 
   return (
-    <div className="flex justify-center  items-center">
-      <div className=" p-4 rounded w-1/2 max-sm:w-10/12 bg-primaryColor-50 shadow mt-4">
-        <h2 className="text-xl flex justify-center font-bold mb-4">Add Product</h2>
+    <div className="flex justify-center items-center">
+      <div className="p-4 rounded w-full max-sm:w-10/12 bg-primaryColor-50 shadow mt-4">
+        <h2 className="text-xl flex justify-center  font-bold mb-4">Add Product</h2>
         <form
           onSubmit={handleSubmit}
           className="space-y-3 flex justify-center flex-col"
@@ -68,16 +95,59 @@ export default function AddProduct({ onProductAdded }: Props) {
             onChange={handleChange}
             required
           />
+          <label htmlFor="price" className="block font-medium text-gray-700">
+            Price
+          </label>
           <input
             className="border border-gray-300 p-2 w-full"
             name="price"
             placeholder="Price"
-            // type="number"
+
+            type="number"
             value={form.price}
             onChange={handleChange}
             required
           />
-
+          <label htmlFor="price" className="block font-medium text-gray-700">
+            Discount Percentage
+          </label>
+          <input
+            className="border border-gray-300 p-2 w-full"
+            name="discountPercentage"
+            placeholder="Discount Percentage"
+            type="number"
+            value={form.discountPercentage}
+            onChange={handleChange}
+            required
+          />
+          <label htmlFor="price" className="block font-medium text-gray-700">
+            Weight
+          </label>
+          <input
+            className="border border-gray-300 p-2 w-full"
+            name="weight"
+            placeholder="weight"
+            type="number"
+            value={form.weight}
+            onChange={handleChange}
+            required
+          />
+          <input
+            className="border border-gray-300 p-2 w-full"
+            name="brand"
+            placeholder="Brand"
+            value={form.brand}
+            onChange={handleChange}
+            required
+          />
+          <input
+            className="border border-gray-300 p-2 w-full"
+            name="image"
+            placeholder="Image url"
+            value={form.images}
+            onChange={handleChange}
+            required
+          />
           <button
             type="submit"
             className="bg-primaryColor-500 flex justify-center items-center text-white px-4 py-2 rounded"
