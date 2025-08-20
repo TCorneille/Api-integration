@@ -10,16 +10,19 @@ interface Props {
 
 const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose }) => {
   const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [backupProduct, setBackupProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(false); // fetching
+  const [saving, setSaving] = useState(false);   // saving
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
+  // Fetch product when productId changes
   useEffect(() => {
     if (!productId) {
       setProduct(null);
       return;
     }
-    
+
     const fetchProduct = async () => {
       setLoading(true);
       setError(null);
@@ -28,63 +31,81 @@ const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose 
         setProduct(res.data);
       } catch (err) {
         console.error(err);
-         setError("Failed to load product details");
+        setError("Failed to load product details");
       } finally {
         setLoading(false);
       }
     };
-    
-    fetchProduct();
-  }, [productId]); // Fixed variable name from ProductId to productId
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    fetchProduct();
+  }, [productId]);
+
+  // Handle input change
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (!product) return;
+    const { name, value } = e.target;
+
     setProduct({
       ...product,
-      [e.target.name]: e.target.value
+      [name]: name === "price" ? Number(value) : value
     });
   };
 
+  // Save product updates with validation
   const handleSave = async () => {
-  if (!product) return;
+    if (!product) return;
 
-  try {
-    setLoading(true);
-    const res = await api.put(`/${productId}`, {
-      title: product.title,
-      price: product.price,
-      description: product.description,
-     
-    });
-    
-    console.log("Updated product:", res.data);
-    onProductUpdated();
-    setIsEditing(false);
-  } catch (err) {
-    console.error(err);
-    // setError("Failed to update product");
-  } finally {
-    setLoading(false);
-  }
-};
-;
-
-  const handleCancelEdit = () => {
-    
-    if (productId) {
-      api.get<Product>(`/${productId}`)
-        .then(res => setProduct(res.data))
-        .catch(err => console.error(err));
+    if (!product.title.trim()) {
+      setError("Title is required.");
+      return;
     }
-    setIsEditing(false);
+    if (product.price <= 0) {
+      setError("Price must be greater than 0.");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const res = await api.put(`/${productId}`, {
+        title: product.title,
+        price: product.price,
+        description: product.description,
+        category: product.category,
+      });
+
+      console.log("Updated product:", res.data);
+      onProductUpdated();
+      setIsEditing(false);
+      setError(null); // clear validation error on success
+    } catch (err) {
+      console.error(err);
+      setError("Failed to update product");
+    } finally {
+      setSaving(false);
+    }
   };
 
+  // Start editing (store backup)
+  const startEditing = () => {
+    if (product) setBackupProduct({ ...product });
+    setIsEditing(true);
+  };
+
+  // Cancel edit (restore backup)
+  const handleCancelEdit = () => {
+    if (backupProduct) setProduct(backupProduct);
+    setIsEditing(false);
+    setError(null);
+  };
+
+  // UI states
   if (loading) return <div className="p-4 text-center">Loading product details...</div>;
-  if (error) return <div className="p-4 text-red-500">{error}</div>;
+  if (error && !isEditing) return <div className="p-4 text-red-500">{error}</div>;
   if (!product) return <div className="p-4">No product selected</div>;
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
+      {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Product Details</h2>
         <button 
@@ -95,7 +116,16 @@ const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose 
         </button>
       </div>
 
+      {/* Error message while editing */}
+      {error && isEditing && (
+        <div className="mb-4 p-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded">
+          {error}
+        </div>
+      )}
+
+      {/* Product Info */}
       <div className="space-y-4">
+        {/* Title */}
         <div>
           <label className="block text-sm font-medium text-gray-700">Title</label>
           {isEditing ? (
@@ -111,6 +141,7 @@ const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose 
           )}
         </div>
 
+        {/* Category */}
         <div>
           <label className="block text-sm font-medium text-gray-700">Category</label>
           {isEditing ? (
@@ -125,21 +156,24 @@ const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose 
             <p className="mt-1">{product.category}</p>
           )}
         </div>
-         <div>
+
+        {/* Description */}
+        <div>
           <label className="block text-sm font-medium text-gray-700">Description</label>
           {isEditing ? (
-            <input
-              type="text"
-              name="category"
+            <textarea
+              name="description"
               value={product.description}
               onChange={handleChange}
               className="mt-1 p-2 w-full border rounded"
+              rows={3}
             />
           ) : (
             <p className="mt-1">{product.description}</p>
           )}
         </div>
 
+        {/* Price */}
         <div>
           <label className="block text-sm font-medium text-gray-700">Price</label>
           {isEditing ? (
@@ -149,13 +183,13 @@ const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose 
               value={product.price}
               onChange={handleChange}
               className="mt-1 p-2 w-full border rounded"
-              
             />
           ) : (
             <p className="mt-1">${product.price.toFixed(2)}</p>
           )}
         </div>
 
+        {/* Images */}
         {product.images && product.images.length > 0 && (
           <div>
             <label className="block text-sm font-medium text-gray-700">Images</label>
@@ -171,14 +205,36 @@ const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose 
             </div>
           </div>
         )}
+
+        {/* Reviews */}
+        {product.reviews && product.reviews.length > 0 && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Reviews</label>
+            <ul className="mt-2 space-y-2">
+              {product.reviews.map((review, index) => (
+                <li key={index} className="p-3 border rounded bg-gray-50 text-sm">
+                  <p className="font-semibold">{review.reviewerName ?? "Anonymous"}</p>
+                  <p className="text-gray-600 italic">Rating: {review.rating ?? "N/A"} ★</p>
+                  <p className="mt-1">{review.comment ?? "No comment provided."}</p>
+                  {review.date && (
+                    <p className="text-xs text-gray-400">
+                      {new Date(review.date).toLocaleDateString()}
+                    </p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
-      <div className="mt-6 flex  justify-end space-x-2">
+      {/* Action buttons */}
+      <div className="mt-6 flex justify-end space-x-2">
         {!isEditing ? (
           <>
             <button
-              onClick={() => setIsEditing(true)}
-              className="px-4 py-2 bg-primaryColor-500 text-white rounded"
+              onClick={startEditing}
+              className="px-4 py-2 bg-primaryColor-500 text-white rounded hover:bg-primaryColor-600"
             >
               Edit
             </button>
@@ -194,9 +250,9 @@ const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose 
             <button
               onClick={handleSave}
               className="px-4 py-2 bg-primaryColor-500 text-white rounded hover:bg-green-600"
-              disabled={loading}
+              disabled={saving}
             >
-              {loading ? "Saving..." : "Save"}
+              {saving ? "Saving..." : "Save"}
             </button>
             <button
               onClick={handleCancelEdit}
@@ -212,3 +268,4 @@ const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose 
 };
 
 export default ProductDetails;
+
