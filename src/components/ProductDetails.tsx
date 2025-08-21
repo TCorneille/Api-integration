@@ -4,15 +4,15 @@ import type { Product } from "../types/productTypes";
 
 interface Props {
   productId: number | null;
-  onProductUpdated: () => void;
+  onProductUpdated: (updatedProduct: Product) => void;
   onClose: () => void;
 }
 
 const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose }) => {
   const [product, setProduct] = useState<Product | null>(null);
   const [backupProduct, setBackupProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(false); // fetching
-  const [saving, setSaving] = useState(false);   // saving
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -66,6 +66,8 @@ const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose 
 
     try {
       setSaving(true);
+      setError(null);
+      
       const res = await api.put(`/${productId}`, {
         title: product.title,
         price: product.price,
@@ -74,9 +76,15 @@ const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose 
       });
 
       console.log("Updated product:", res.data);
-      onProductUpdated();
+      
+      // Update local state with the response data
+      setProduct(res.data);
+      
+      // Notify parent component
+      onProductUpdated(res.data);
+      
+      // Exit editing mode
       setIsEditing(false);
-      setError(null); // clear validation error on success
     } catch (err) {
       console.error(err);
       setError("Failed to update product");
@@ -268,4 +276,3 @@ const ProductDetails: React.FC<Props> = ({ productId, onProductUpdated, onClose 
 };
 
 export default ProductDetails;
-

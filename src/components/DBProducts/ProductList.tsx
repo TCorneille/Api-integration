@@ -14,8 +14,11 @@ import { Link } from "react-router-dom";
 interface Props {
   product: Product;
   onSelectProduct: (id: number | null) => void;
+
   refreshKey: number;
   onProductUpdated: () => void;
+
+
 }
 
 const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUpdated }) => {
@@ -105,45 +108,46 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
   if (error) return <p className="text-center text-red-500 p-4">{error}</p>;
 
   return (
-    <div className="min-lg:ml-8 mt-25 min-md:ml-5">
-      <div className="fixed top-4 right-4 mt-1.5 z-20">
-        
+    <div className=" mt-25">
+      <div className=" bg-accent-500">
+        <div className="absolute top-4 right-4 mt-5">
 
-           <Link to={`/`} className=' px-3 mt-auto  text-start hover:bg-primaryColor-50  flex '> Log out</Link>
-          
-      </div>
-      {/* Cart Button */}
-      <div className="fixed top-4 right-25 z-40">
-        <button
-          onClick={() => setShowCart(true)}
-          className="bg-primaryColor-500 text-white p-3 rounded-full shadow-lg hover:bg-primaryColor-600 relative"
-        >
-          <TiShoppingCart className="w-6 h-6" />
-          {cart && cart.length > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
-              {cart.length}
-            </span>
-          )}
-        </button>
-      </div>
 
-      {/* Error message for cart issues */}
-      {cartError && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white p-3 rounded-md shadow-md z-50">
-          {cartError}
+          <Link to={`/`} className=' px-3 mt-auto  text-start hover:bg-primaryColor-50  flex '> Log out</Link>
+
         </div>
-      )}
-      <div className="fixed top-4 right-40 mt-1.5 z-20">
-        <button
-          onClick={() => setShowAddProduct(true)}
-          className="bg-primaryColor-500 text-white  font-bold p-1 rounded hover:bg-primaryColor-800"
-        >
-         <span className="text-2xl">+ </span> Add Product
-        </button>
+        {/* Cart Button */}
+        <div className="fixed top-4 right-25 z-40">
+          <button
+            onClick={() => setShowCart(true)}
+            className="bg-primaryColor-500 text-white p-3 rounded-full shadow-lg hover:bg-primaryColor-600 relative"
+          >
+            <TiShoppingCart className="w-6 h-6" />
+            {cart && cart.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                {cart.length}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Error message for cart issues */}
+        {cartError && (
+          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white p-3 rounded-md shadow-md z-50">
+            {cartError}
+          </div>
+        )}
+        <div className="absolute top-4 right-40 mt-1.5 z-20">
+          <button
+            onClick={() => setShowAddProduct(true)}
+            className="bg-primaryColor-500 text-white  py-1 font-bold p-1 rounded hover:bg-primaryColor-800"
+          >
+            <span className="text-2xl">+ </span> Add Product
+          </button>
+        </div>
       </div>
 
-
-      <div className="relative mb-4 flex justify-center">
+      <div className="relative mb-4 ml-50 flex justify-center">
         <input
           type="text"
           value={searchTerm}
@@ -165,11 +169,11 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
       {filteredProducts.length === 0 ? (
         <p className="text-center p-4">No products found</p>
       ) : (
-        <ul className="space-y-3 grid min-lg:grid-cols-4 min-md:grid-cols-3 max-sm:flex max-sm:flex-col max-sm:items-center">
+        <ul className="space-y-3 grid min-lg:grid-cols-4  lg:ml-45 min-md:grid-cols-3 max-sm:flex max-sm:flex-col max-sm:items-center">
           {filteredProducts.map((product) => (
             <li
               key={product.id}
-              className="min-lg:w-[350px] min-md:w-[250px] max-sm:w-10/12 p-6 rounded-lg shadow-sm flex bg-primaryColor-50 flex-col justify-between items-center gap-4"
+              className="min-lg:w-[280px] min-md:w-[250px] max-sm:w-10/12 p-6 rounded-lg shadow-sm flex bg-primaryColor-50 flex-col justify-between items-center gap-4"
             >
               <div className="w-full">
                 <div className="flex  justify-between">
@@ -237,38 +241,38 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
           ))}
         </ul>
       )}
-{showAddProduct && (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-    <div className="bg-white rounded-lg max-w-lg w-full p-6 shadow-lg relative">
-      <button
-        onClick={() => setShowAddProduct(false)}
-        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-      >
-        ✕
-      </button>
+      {showAddProduct && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-lg w-full p-6 shadow-lg relative">
+            <button
+              onClick={() => setShowAddProduct(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
 
-      <AddProduct
-        onProductAdded={(product) => {
-          setNewProduct(product);      // keep local reference
-          setProducts((prev) => [product, ...prev]); // show instantly
-          setShowAddProduct(false);    // close modal
-        }}
-      />
-    </div>
-  </div>
-)}
+            <AddProduct
+              onProductAdded={(product) => {
+                setNewProduct(product);      // keep local reference
+                setProducts((prev) => [product, ...prev]); // show instantly
+                setShowAddProduct(false);    // close modal
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       {selectedProductId && (
         <div className="fixed inset-0 bg-black/50 bg-opacity-30 flex items-center justify-center p-4 z-50">
           <div className="bg-primaryColor-50 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <ProductDetails
               productId={selectedProductId}
-              onUpdated={() => {
-                onProductUpdated();
+              onProductUpdated={() => {
                 handleCloseDetails();
               }}
               onClose={handleCloseDetails}
             />
+
           </div>
         </div>
       )}

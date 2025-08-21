@@ -1,28 +1,30 @@
-import { useState, useEffect } from "react";
-// import AddProduct from "../components/AddProduct";
+import React, { useState } from "react";
 import ProductList from "../components/DBProducts/ProductList";
+import Sidebar from "../components/Sidebar";
 import type { Product } from "../types/productTypes";
 
-export default function ProductPage() {
-  const [products, setProducts] = useState<Product[]>([]);
+const ProductPage: React.FC = () => {
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  useEffect(() => {
-    fetch("https://dummyjson.com/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data.products))
-      .catch((err) => console.error("Error fetching products:", err));
-  }, []);
-
-  const handleProductAdded = (newProduct: Product) => {
-    // ✅ Immediately add it to the list
-    setProducts((prev) => [...prev, { ...newProduct, id: prev.length + 1 }]);
+  // Function to refresh products after add/edit/delete
+  const handleProductUpdated = () => {
+    setRefreshKey((prev) => prev + 1);
   };
 
   return (
-    <div className="">
-      {/* <AddProduct onProductAdded={handleProductAdded} /> */}
-      <ProductList products={products} />
+    <div className="flex">
+      <Sidebar /> {/* Keep the sidebar */}
+      
+      <div className="flex-1 ml-10 p-4">
+        <ProductList
+          onSelectProduct={setSelectedProductId}
+          // refreshKey={refreshKey}
+          onProductUpdated={handleProductUpdated}
+        />
+      </div>
     </div>
   );
-}
+};
 
+export default ProductPage;

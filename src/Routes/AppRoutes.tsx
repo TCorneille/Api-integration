@@ -1,7 +1,7 @@
 import ProductPage from "../pages/ProductPage";
 import Login from "../pages/Login";
 import { Routes, Route } from "react-router-dom";
-import CategoryPage from "../components/CategoryPage";
+import CategoryPage from "../pages/CategoryPage";
 
 export default function AppRoutes() {
   return (

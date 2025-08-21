@@ -1,6 +1,9 @@
 import React from "react";
 import { useCart } from "../context/CartContext";
 import { TiDelete } from "react-icons/ti";
+import { Link } from "react-router-dom";
+
+
 
 const Cart: React.FC = () => {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
@@ -109,7 +112,8 @@ const Cart: React.FC = () => {
           Checkout
         </button>
         
-        <button className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50">
+        < button  className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50">
+          
           Continue Shopping
         </button>
       </div>

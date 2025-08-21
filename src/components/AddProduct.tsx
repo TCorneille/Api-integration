@@ -5,16 +5,15 @@ interface Props {
   onProductAdded: (product: Product) => void;
 }
 
-
-//Define a form type separate from Product
+// Define a form type separate from Product
 interface ProductForm {
   title: string;
   category: string;
   price: number;
   discountPercentage: number;
-  weight: number
+  weight: number;
   brand: string;
-  images: string[];
+  image: string; // single input for image
 }
 
 export default function AddProduct({ onProductAdded }: Props) {
@@ -25,7 +24,7 @@ export default function AddProduct({ onProductAdded }: Props) {
     discountPercentage: 0,
     weight: 0,
     brand: "",
-    images: [""]
+    image: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +32,7 @@ export default function AddProduct({ onProductAdded }: Props) {
     setForm((prev) => ({
       ...prev,
       [name]:
-        name === "price" || name === "discountPercentage"
+        name === "price" || name === "discountPercentage" || name === "weight"
           ? Number(value)
           : value,
     }));
@@ -44,7 +43,10 @@ export default function AddProduct({ onProductAdded }: Props) {
 
     fetch("https://dummyjson.com/products/add", {
       method: "POST",
-      body: JSON.stringify(form),
+      body: JSON.stringify({
+        ...form,
+        images: [form.image], // ✅ send image as array
+      }),
       headers: { "Content-Type": "application/json" },
     })
       .then((res) => res.json())
@@ -60,7 +62,7 @@ export default function AddProduct({ onProductAdded }: Props) {
           discountPercentage: 0,
           weight: 0,
           brand: "",
-          images: [""]
+          image: "",
         });
 
         onProductAdded(data); // ✅ send product to parent
@@ -74,7 +76,7 @@ export default function AddProduct({ onProductAdded }: Props) {
   return (
     <div className="flex justify-center items-center">
       <div className="p-4 rounded w-full max-sm:w-10/12 bg-primaryColor-50 shadow mt-4">
-        <h2 className="text-xl flex justify-center  font-bold mb-4">Add Product</h2>
+        <h2 className="text-xl flex justify-center font-bold mb-4">Add Product</h2>
         <form
           onSubmit={handleSubmit}
           className="space-y-3 flex justify-center flex-col"
@@ -87,6 +89,7 @@ export default function AddProduct({ onProductAdded }: Props) {
             onChange={handleChange}
             required
           />
+
           <input
             className="border border-gray-300 p-2 w-full"
             name="category"
@@ -95,6 +98,7 @@ export default function AddProduct({ onProductAdded }: Props) {
             onChange={handleChange}
             required
           />
+
           <label htmlFor="price" className="block font-medium text-gray-700">
             Price
           </label>
@@ -102,13 +106,16 @@ export default function AddProduct({ onProductAdded }: Props) {
             className="border border-gray-300 p-2 w-full"
             name="price"
             placeholder="Price"
-
             type="number"
             value={form.price}
             onChange={handleChange}
             required
           />
-          <label htmlFor="price" className="block font-medium text-gray-700">
+
+          <label
+            htmlFor="discountPercentage"
+            className="block font-medium text-gray-700"
+          >
             Discount Percentage
           </label>
           <input
@@ -120,18 +127,20 @@ export default function AddProduct({ onProductAdded }: Props) {
             onChange={handleChange}
             required
           />
-          <label htmlFor="price" className="block font-medium text-gray-700">
+
+          <label htmlFor="weight" className="block font-medium text-gray-700">
             Weight
           </label>
           <input
             className="border border-gray-300 p-2 w-full"
             name="weight"
-            placeholder="weight"
+            placeholder="Weight"
             type="number"
             value={form.weight}
             onChange={handleChange}
             required
           />
+
           <input
             className="border border-gray-300 p-2 w-full"
             name="brand"
@@ -140,14 +149,16 @@ export default function AddProduct({ onProductAdded }: Props) {
             onChange={handleChange}
             required
           />
+
           <input
             className="border border-gray-300 p-2 w-full"
             name="image"
-            placeholder="Image url"
-            value={form.images}
+            placeholder="Image URL"
+            value={form.image}
             onChange={handleChange}
             required
           />
+
           <button
             type="submit"
             className="bg-primaryColor-500 flex justify-center items-center text-white px-4 py-2 rounded"
