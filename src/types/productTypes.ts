@@ -24,7 +24,7 @@ export type Product = {
   title: string;
   description: string;
   category: string;
-  price: number;
+  price: number|string;
   discountPercentage: number;
   rating: number;
   stock: number;

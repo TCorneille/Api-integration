@@ -142,12 +142,13 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
             onClick={() => setShowAddProduct(true)}
             className="bg-primaryColor-500 text-white  py-1 font-bold p-1 rounded hover:bg-primaryColor-800"
           >
-            <span className="text-2xl">+ </span> Add Product
+            <span className="text-2xl">+ </span>
+            <span className="max-sm:hidden">Add Product</span>
           </button>
         </div>
       </div>
 
-      <div className="relative mb-4 ml-50 flex justify-center">
+      <div className="relative mb-4  flex justify-center">
         <input
           type="text"
           value={searchTerm}
@@ -169,24 +170,26 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
       {filteredProducts.length === 0 ? (
         <p className="text-center p-4">No products found</p>
       ) : (
-        <ul className="space-y-3 grid min-lg:grid-cols-4  lg:ml-45 min-md:grid-cols-3 max-sm:flex max-sm:flex-col max-sm:items-center">
+        <ul className="space-y-3 grid min-lg:grid-cols-4  min-md:grid-cols-3 max-sm:flex max-sm:flex-col max-sm:items-center">
           {filteredProducts.map((product) => (
             <li
               key={product.id}
-              className="min-lg:w-[280px] min-md:w-[250px] max-sm:w-10/12 p-6 rounded-lg shadow-sm flex bg-primaryColor-50 flex-col justify-between items-center gap-4"
+              onClick={() => handleEditClick(product.id)}   // open details on card click
+              className="min-lg:w-[280px] min-md:w-[250px] max-sm:w-10/12 
+             p-6 rounded-lg shadow-sm flex bg-primaryColor-50 flex-col 
+             justify-between items-center gap-4 cursor-pointer 
+             hover:shadow-lg transition-shadow"
             >
               <div className="w-full">
                 <div className="flex  justify-between">
                   <h2 className="font-bold">{product.title}</h2>
-                  <div className="">
+                  <div>
                     <p className="bg-accent-200 rounded">-{product.discountPercentage}%</p>
                   </div>
                 </div>
                 <div className="flex justify-between p-2 w-full items-end">
                   <p>{product.category}</p>
-
                   <p className="text-3xl">${product.price}</p>
-
                 </div>
               </div>
 
@@ -197,22 +200,30 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
                     alt={product.title}
                     className="w-24 h-24 bg-white object-cover rounded"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = "https://via.placeholder.com/96";
+                      (e.target as HTMLImageElement).src =
+                        "https://via.placeholder.com/96";
                     }}
                   />
                 )}
               </div>
 
+              {/* Buttons — stopPropagation to avoid triggering card click */}
               <div className="space-x-2 flex justify-center w-full">
                 <button
-                  onClick={() => handleEditClick(product.id)}
-                  className="bg-primaryColor-500 flex p-1 text-white  text-sm rounded "
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent opening details
+                    handleEditClick(product.id);
+                  }}
+                  className="bg-primaryColor-500 flex p-1 text-white text-sm rounded "
                 >
                   <GrFormView className="size-5" />
                   <span>Details</span>
                 </button>
                 <button
-                  onClick={() => handleDelete(product.id)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent opening details
+                    handleDelete(product.id);
+                  }}
                   className=" bg-red-900 flex text-white text-sm p-1 rounded"
                 >
                   <BiTrash className="size-5" />
@@ -221,7 +232,10 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
               </div>
 
               <button
-                onClick={() => handleAddToCart(product.id)}
+                onClick={(e) => {
+                  e.stopPropagation(); // prevent opening details
+                  handleAddToCart(product.id);
+                }}
                 disabled={addingToCart === product.id}
                 className="bg-primaryColor-800 text-white flex justify-center items-center gap-2 w-full rounded px-3 py-2 hover:bg-primaryColor-500 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
@@ -238,6 +252,7 @@ const ProductList: React.FC<Props> = ({ onSelectProduct, refreshKey, onProductUp
                 )}
               </button>
             </li>
+
           ))}
         </ul>
       )}

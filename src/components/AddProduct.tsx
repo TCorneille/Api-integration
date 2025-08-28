@@ -52,7 +52,7 @@ export default function AddProduct({ onProductAdded }: Props) {
       .then((res) => res.json())
       .then((data: Product) => {
         console.log("Product created:", data);
-        alert("Product added successfully!");
+        // alert("Product added successfully!");
 
         // Reset form
         setForm({
@@ -78,6 +78,8 @@ export default function AddProduct({ onProductAdded }: Props) {
       <div className="p-4 rounded w-full max-sm:w-10/12 bg-primaryColor-50 shadow mt-4">
         <h2 className="text-xl flex justify-center font-bold mb-4">Add Product</h2>
         <form
+
+    
           onSubmit={handleSubmit}
           className="space-y-3 flex justify-center flex-col"
         >
